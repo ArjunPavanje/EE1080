@@ -21,6 +21,11 @@ N = int(sys.argv[7])
 mean = np.array([mu_1, mu_2])
 K = np.array([[K_11, K_12], [K_21, K_22]])
 
+if not np.allclose(K, K.T):
+    sys.exit("Matrix should be symmetric")
+if not np.all(np.linalg.eigvals(K) >= 0):
+    sys.exit("Matrix should be Positive semidefinite")
+
 print(mean)
 print(K)
 
@@ -49,14 +54,14 @@ F = stats.multivariate_normal.pdf(Xpos, [0, 0], [[0.25, 0.3], [0.3, 1.0]])
 fig, axes = plt.subplots(1, 2, figsize=(14, 7))
 
 # Plot the contour plot and scatter plot for the custom Gaussian vectors
-axes[0].contour(x1, x2, F)
+axes[0].contour(x1, x2, F, cmap = 'plasma')
 axes[0].scatter(gaussian_vectors_custom[:, 0], gaussian_vectors_custom[:, 1], color='plum')
 axes[0].set_title('Custom Gaussian Vectors')
 axes[0].set_xlabel('X1')
 axes[0].set_ylabel('X2')
 
 # Plot the contour plot and scatter plot for the X from multivariate_normal.rvs
-axes[1].contour(x1, x2, F)
+axes[1].contour(x1, x2, F, cmap = 'plasma')
 axes[1].scatter(X[:, 0], X[:, 1], color='chartreuse')
 axes[1].set_title('Multivariate Normal Samples')
 axes[1].set_xlabel('X1')

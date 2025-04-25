@@ -6,8 +6,16 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Setting a random seed for reproducability
-random.seed(42)
+np.random.seed(69)
 
+'''
+We get x^_{MMSE} after simplification to be,
+                          mu_0/var_0 + summation (i = 0 to i) y_i / var_i
+X^[Y_1, Y_2, ..., Y_N] = -------------------------------------------------
+                            1/var_0 + summation (i = 0 to i) 1/var_i
+'''
+
+# Calculating MMSE according to above mentioned formula
 def mmse_calculator(mu_0, var_0, y_i, var_i):
     mmse_estimates = []
     for n in range(1, len(y_i) + 1):
@@ -22,6 +30,14 @@ def mmse_calculator(mu_0, var_0, y_i, var_i):
         mmse_estimates.append(mmse_estimate)
     return mmse_estimates
 
+# Plotting and related settings
+def plot(mmse_estimates):
+    x = np.arange(1, len(mmse_estimates) +1)
+    plt.scatter(x, mmse_estimates, label='Convergence of X^', color = "chartreuse")
+    plt.xlabel("MMSE Estimates")
+    plt.ylabel("MMSE of X")
+    plt.legend()
+    plt.show()
 
 def process_csv(file_path):
     # Read and display the CSV file
@@ -68,8 +84,5 @@ if __name__ == "__main__":
     var_i = mmse_samples_array[:, 1]
 
     mmse_estimates = mmse_calculator(mu_x, var_x, y_i, var_i)
-    x = np.arange(1, len(mmse_estimates) +1)
-    plt.scatter(x, mmse_estimates, label='Convergence of X^')
-    plt.show()
-
+    plot(mmse_estimates)
 
