@@ -1,3 +1,4 @@
+
 import random
 import math
 import sys
@@ -5,8 +6,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 import scipy.stats as stats
 
-# Seeding for reproducability
+# Seeding for reproducibility
 np.random.seed(69)
+
 # Error Handling
 if len(sys.argv) != 8:
     sys.exit("Invalid Number of Parameters")
@@ -28,16 +30,16 @@ if not np.allclose(K, K.T):
 if not np.all(np.linalg.eigvals(K) >= 0):
     sys.exit("Matrix should be Positive semidefinite")
 
-print(mean)
-print(K)
+print("Mean:\n", mean)
+print("Covariance Matrix:\n", K)
 
-# Generate samples using scipy multivariate normal
-X = stats.multivariate_normal.rvs(mean, K, N, random_state = 42)
+# Generating samples using scipy multivariate normal
+X = stats.multivariate_normal.rvs(mean, K, N, random_state=42)
 
 # Spectral Decomposition
 eigen_values, eigen_vectors = np.linalg.eigh(K)
 D = np.diag(eigen_values)
-U = eigen_vectors
+U = eigen_vectors  # Columns are eigenvectors u1, u2
 
 A = U @ np.sqrt(D)
 S = np.random.normal(0, 1, size=(2, N))
@@ -50,7 +52,7 @@ X1, X2 = np.meshgrid(x1, x2)
 Xpos = np.empty(X1.shape + (2,))
 Xpos[:, :, 0] = X1
 Xpos[:, :, 1] = X2
-F = stats.multivariate_normal.pdf(Xpos, [0, 0], [[0.25, 0.3], [0.3, 1.0]])
+F = stats.multivariate_normal.pdf(Xpos, mean, K)  # Using actual mean and covariance
 
 # Create subplots
 fig, axes = plt.subplots(1, 2, figsize=(14, 7))
@@ -61,11 +63,37 @@ axes[0].set_title('Custom Gaussian Vectors')
 axes[0].set_xlabel('X1')
 axes[0].set_ylabel('X2')
 
+# First two eigen vectors
+u1 = U[:, 0]
+u2 = U[:, 1]
+if(u1[0] == 0):
+    axes[0].annotate("", xytext=(mean[0], mean[1]), xy=(mean[0], 1 + mean[1]), arrowprops=dict(arrowstyle="->", color='brown', lw=2))
+else:
+    axes[0].annotate("", xytext=(mean[0], mean[1]), xy=(mean[0] + 1, (u2[0] / u1[0]) + mean[1]), arrowprops=dict(arrowstyle="->", color='brown', lw=2))
+if(u1[1] == 0):
+    axes[0].annotate("", xytext=(mean[0], mean[1]), xy=(mean[0], 1 + mean[1]), arrowprops=dict(arrowstyle="->", color='brown', lw=2))
+else:
+    axes[0].annotate("", xytext=(mean[0], mean[1]), xy=(mean[0] + 1, (u2[1] / u1[1]) + mean[1]), arrowprops=dict(arrowstyle="->", color='brown', lw=2))
+
 axes[1].contour(x1, x2, F, cmap = 'plasma')
 axes[1].scatter(X[:, 0], X[:, 1], marker = 'x', color='chartreuse')
+
+# First two eigen vectors
+u1 = U[:, 0]
+u2 = U[:, 1]
+if(u1[0] == 0):
+    axes[1].annotate("", xytext=(mean[0], mean[1]), xy=(mean[0], 1 + mean[1]), arrowprops=dict(arrowstyle="->", color='black', lw=2))
+else:
+    axes[1].annotate("", xytext=(mean[0], mean[1]), xy=(mean[0] + 1, (u2[0] / u1[0]) + mean[1]), arrowprops=dict(arrowstyle="->", color='black', lw=2))
+if(u1[1] == 0):
+    axes[1].annotate("", xytext=(mean[0], mean[1]), xy=(mean[0], 1 + mean[1]), arrowprops=dict(arrowstyle="->", color='black', lw=2))
+else:
+    axes[1].annotate("", xytext=(mean[0], mean[1]), xy=(mean[0] + 1, (u2[1] / u1[1]) + mean[1]), arrowprops=dict(arrowstyle="->", color='black', lw=2))
 axes[1].set_title('Multivariate Normal Samples')
 axes[1].set_xlabel('X1')
 axes[1].set_ylabel('X2')
+
+
 
 # Show the plot
 plt.tight_layout()

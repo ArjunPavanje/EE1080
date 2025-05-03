@@ -47,7 +47,7 @@ def plot(X, N):
     if mse_fa < mse_fb:
         print('a')
     else:
-        print(fb)
+        print('b')
 
 
 '''
