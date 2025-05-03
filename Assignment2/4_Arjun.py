@@ -25,11 +25,9 @@ N = int(sys.argv[7])
 mean = np.array([mu_1, mu_2])
 K = np.array([[K_11, K_12], [K_21, K_22]])
 
-if not np.allclose(K, K.T):
+if K[0][1] != K[1][0]:
     sys.exit("Matrix should be symmetric")
-if not np.all(np.linalg.eigvals(K) >= 0):
-    sys.exit("Matrix should be Positive semidefinite")
-
+    
 print("Mean:\n", mean)
 print("Covariance Matrix:\n", K)
 
@@ -38,6 +36,11 @@ X = stats.multivariate_normal.rvs(mean, K, N, random_state=42)
 
 # Spectral Decomposition
 eigen_values, eigen_vectors = np.linalg.eigh(K)
+
+# Checking Positive Semi Definite
+if (eigen_values[0] < 0 or eigen_values[1]<0):
+    sys.exit("Matrix should be Positive semidefinite")
+
 D = np.diag(eigen_values)
 U = eigen_vectors  # Columns are eigenvectors u1, u2
 

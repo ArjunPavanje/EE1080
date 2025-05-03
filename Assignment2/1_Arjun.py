@@ -50,7 +50,10 @@ def plot(Y, n, N, samples, mode):
 
     # Plot and related Settings
     plt.plot(x, y, label='Normal PDF')
-    plt.hist(Y, bins = "auto", density = True, alpha = 0.5, label = 'Histogram')
+    if mode==0:
+        plt.hist(Y, density = True, alpha = 0.5, label = 'Histogram')
+    else:
+        plt.hist(Y, bins = "auto", density = True, alpha = 0.5, label = 'Histogram')
     plt.xlabel("Samples")
     plt.ylabel("Frequency")
     plt.legend()
